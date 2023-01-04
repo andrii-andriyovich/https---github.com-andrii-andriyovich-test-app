@@ -1,38 +1,54 @@
-.App {
-  text-align: center;
+table {
+  border-collapse: collapse;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px;
 }
 
-.App-logo {
-  height: 40vmin;
+td {
+  border: 1px solid rgb(179, 170, 170);
+  font-size: 28px;
+  font-weight: 400;
+  padding: 8px;
+  user-select: none;
+}
+
+tr:last-child > td:last-child {
+  visibility: hidden;
+}
+
+tr:nth-last-child(even) > td {
+  background-color: rgba(225, 224, 224, 0.531);
+}
+
+tr > td:not(:first-child) > svg {
+  display: none;
+}
+
+tr:last-child {
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+td:last-child {
+  pointer-events: none;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+tr:last-child > td:first-child {
+  visibility: hidden;
 }
 
-.App-link {
-  color: #61dafb;
+tr > td:hover {
+  cursor: pointer;
+  transition: 0.3s;
+  background-color: rgba(235, 212, 159, 0.618);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+tr > td:first-child > svg:hover {
+  transform: scale(1.3);
+  transition: 0.3s;
+}
+
+svg {
+  vertical-align: text-top;
 }
