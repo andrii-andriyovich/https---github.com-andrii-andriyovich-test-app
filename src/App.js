@@ -4,11 +4,6 @@ import { MdDelete } from 'react-icons/md'
 import './App.css'
 
 function App() {
-  // function cell() {
-  //   this.value = Math.floor(Math.random() * 900 + 100)
-  //   this.id = uuidv4()
-  // }
-
   let data = {
     rows: 7,
     columns: 10,
