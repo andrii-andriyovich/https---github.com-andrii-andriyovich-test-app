@@ -1,162 +1,125 @@
 import { useState } from 'react'
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as createId } from 'uuid'
 import { MdDelete } from 'react-icons/md'
+import matrix from './data/createMatrix'
 import './App.css'
 
 function App() {
-  let data = {
-    rows: 7,
-    columns: 10,
-  }
-
-  let matrix = []
-
-  for (let i = 0; i < data.rows; i++) {
-    matrix.push([i])
-    for (let g = 0; g < data.columns; g++) {
-      matrix[i][g] = {
-        value: Math.floor(Math.random() * 900 + 100),
-        id: uuidv4(),
-      }
-    }
-  }
-
-  let average = []
-  matrix[0].forEach(() => average.push({ value: 0, id: uuidv4() }))
-
-  for (let i = 0; i < matrix.length; i++) {
-    for (let g = 0; g < matrix[i].length; g++) {
-      average[g].value += matrix[i][g].value
-    }
-  }
-  const averageNumber = average.map((el) => {
-    return { ...el, value: Math.floor(el.value / matrix.length) }
-  })
-  matrix.push(averageNumber)
-
-  let sum = []
-  for (let i = 0; i < matrix.length; i++) {
-    sum.push({ value: 0, id: uuidv4() })
-    for (let g = 0; g < matrix[i].length; g++) {
-      sum[i].value += matrix[i][g].value
-    }
-  }
-
-  for (let i = 0; i < matrix.length; i++) {
-    matrix[i].push(sum[i])
-  }
-
   const [numbers, setNumbers] = useState(matrix)
 
-  function incrementCount(i, n) {
+  function incrementCount(cell, id) {
     let indexOfSum
-    const incremented = numbers.map((el, index) => {
-      return el.map((el) => {
-        if (el.id === i.id) {
+    const incrementedNumbers = numbers.map((row, index) => {
+      return row.map((element) => {
+        if (element.id === cell.id) {
           indexOfSum = index
           return {
-            ...el,
-            value: i.value + 1,
+            ...element,
+            value: cell.value + 1,
           }
         } else {
-          return el
+          return element
         }
       })
     })
-    const incrementedSum = incremented.map((el) => {
-      return el.map((el) => {
+    const incrementedSum = incrementedNumbers.map((row) => {
+      return row.map((cell) => {
         if (
-          el.id ===
-          incremented[indexOfSum][incremented[indexOfSum].length - 1].id
+          cell.id ===
+          incrementedNumbers[indexOfSum][
+            incrementedNumbers[indexOfSum].length - 1
+          ].id
         ) {
           return {
-            ...el,
+            ...cell,
             value:
-              incremented[indexOfSum][incremented[indexOfSum].length - 1]
-                .value + 1,
+              incrementedNumbers[indexOfSum][
+                incrementedNumbers[indexOfSum].length - 1
+              ].value + 1,
           }
         } else {
-          return el
+          return cell
         }
       })
     })
 
-    let newAverage = 0
-    const incrementedAverage = incrementedSum.map((el) => {
-      newAverage += el[n].value
-      return el.map((el) => {
-        if (incrementedSum[incrementedSum.length - 1][n].id === el.id) {
+    let newAverageNumbers = 0
+    const incrementedAverageNumbers = incrementedSum.map((row) => {
+      newAverageNumbers += row[id].value
+      return row.map((cell) => {
+        if (incrementedSum[incrementedSum.length - 1][id].id === cell.id) {
           return {
-            ...el,
-            value: Math.floor(newAverage / incrementedSum.length),
+            ...cell,
+            value: Math.floor(newAverageNumbers / incrementedSum.length),
           }
         } else {
-          return el
+          return cell
         }
       })
     })
-    setNumbers(incrementedAverage)
+    setNumbers(incrementedAverageNumbers)
   }
 
   function deleteRow(index) {
-    const deleted = numbers.filter((element) => {
-      return numbers[index] !== element
+    const deletedRow = numbers.filter((row) => {
+      return numbers[index] !== row
     })
 
-    let deletedAverage = []
-    deleted[0].forEach(() => deletedAverage.push({ value: 0, id: uuidv4() }))
+    let deletedSumNumbers = []
+    deletedRow[0].forEach(() =>
+      deletedSumNumbers.push({ value: 0, id: createId() })
+    )
 
-    for (let i = 0; i < deleted.length; i++) {
-      for (let g = 0; g < deleted[i].length; g++) {
-        deletedAverage[g].value += deleted[i][g].value
+    for (let i = 0; i < deletedRow.length; i++) {
+      for (let g = 0; g < deletedRow[i].length; g++) {
+        deletedSumNumbers[g].value += deletedRow[i][g].value
       }
     }
 
-    const newDeletedAverage = deletedAverage.map((el) => {
-      return { ...el, value: Math.floor(el.value / deleted.length) }
+    const newDeletedAverage = deletedSumNumbers.map((el) => {
+      return { ...el, value: Math.floor(el.value / deletedRow.length) }
     })
-    console.log(newDeletedAverage)
 
-    const newAverageNumber = deleted.map((element) => {
-      console.log(deleted[deleted.length - 1])
-      if (deleted.indexOf(element) === deleted.length - 1) {
+    const newAverageNumbers = deletedRow.map((element) => {
+      if (deletedRow.indexOf(element) === deletedRow.length - 1) {
         return element.map((el) => {
           return {
             ...el,
             value:
-              newDeletedAverage[deleted[deleted.length - 1].indexOf(el)].value,
+              newDeletedAverage[deletedRow[deletedRow.length - 1].indexOf(el)]
+                .value,
           }
         })
       } else {
         return element
       }
     })
-    setNumbers(newAverageNumber)
+    setNumbers(newAverageNumbers)
   }
 
   return (
     <div className="App">
       <table align="center">
         <tbody>
-          {numbers.map((element, index) => {
+          {numbers.map((row, rowIndex) => {
             return (
-              <tr key={index}>
+              <tr key={rowIndex}>
                 <td>
                   <MdDelete
                     onClick={() => {
-                      deleteRow(index)
+                      deleteRow(rowIndex)
                     }}
                   />
                 </td>
-                {element.map((element, id) => {
+                {row.map((cell, id) => {
                   return (
                     <td
                       onClick={() => {
-                        incrementCount(element, id)
+                        incrementCount(cell, id)
                       }}
                       key={id}
                     >
-                      {element.value}
+                      {cell.value}
                     </td>
                   )
                 })}
